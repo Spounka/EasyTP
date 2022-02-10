@@ -1,6 +1,6 @@
 ﻿namespace SharedLib
 {
-    public class IStudentTP
+    public interface IStudentTP
     {
         
     }

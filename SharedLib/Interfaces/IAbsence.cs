@@ -2,6 +2,7 @@
 {
     public interface IAbsence
     {
-        
+        void ViewStatistics();
+        void ConsultAbsence();
     }
 }

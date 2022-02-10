@@ -1,7 +1,7 @@
 ﻿namespace SharedLib
 {
-    public class IPresence
+    public interface IPresence
     {
-        
+        void ValidatePresence();
     }
 }
