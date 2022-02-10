@@ -1,0 +1,149 @@
+﻿<Window x:Class="Student.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:v="clr-namespace:Student.ValidationRules"
+        xmlns:mdl="clr-namespace:Student.Model"
+        mc:Ignorable="d"
+        Title="EasyTP - Student" MinHeight="350" MinWidth="525">
+
+    <Window.Resources>
+        <!-- Model Reference Key -->
+        <mdl:StudentConnectionModel x:Key="connectionModel"></mdl:StudentConnectionModel>
+
+        <!-- Window Validation Controls -->
+
+        <!-- Error Control template -->
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+                <AdornedElementPlaceholder x:Name="adornedError" />
+            </DockPanel>
+        </ControlTemplate>
+
+        <!-- Error Style -->
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)/ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <!-- Top Level Controls -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="120"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Panel, Input Data -->
+        <Border Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Full Name" Margin="0 0 0 5"></TextBlock>
+                    <TextBox x:Name="FullNameField" Padding="3"
+                             Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                             Style="{StaticResource textBoxInError}">
+                        <TextBox.Text>
+                            <Binding Source="{StaticResource connectionModel}"
+                                     Path="FullName" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <v:FullNameRule></v:FullNameRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <TextBlock Text="Server IP" Margin="0 5 0 5"></TextBlock>
+                    <TextBox x:Name="IPField" Padding="3"
+                             Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                             Style="{StaticResource textBoxInError}">
+                        <TextBox.Text>
+                            <Binding Source="{StaticResource connectionModel}"
+                                     Path="ServerIP" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <v:IPRule></v:IPRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <TextBlock Text="Port" Margin="0 5 0 5"></TextBlock>
+                    <TextBox x:Name="PortField" Padding="3"
+                             Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                             Style="{StaticResource textBoxInError}">
+                        <TextBox.Text>
+                            <Binding Source="{StaticResource connectionModel}"
+                                     Path="Port" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <v:PortRule></v:PortRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <Button Click="OnConnectButtonClicked" x:Name="ConnectButton" Content="Connect" Margin="0 5 0 0">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition
+                                                Binding="{Binding ElementName=IPField, Path=(Validation.HasError)}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding ElementName=FullNameField, Path=(Validation.HasError)}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding ElementName=PortField, Path=(Validation.HasError)}"
+                                                Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="IsEnabled" Value="True"></Setter>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Click="OnDisconnectButtonClicked" x:Name="DisconnectButton" Content="Disconnect"
+                            Margin="0 2 0 5" IsEnabled="False">
+                    </Button>
+                </StackPanel>
+                <TextBlock Grid.Row="1" x:Name="StatusText" Text="Status" Margin="0 5 0 5" VerticalAlignment="Bottom"></TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- Chat Box and text input area -->
+        <Border Grid.Column="1" Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <!-- Chat Box -->
+                <TextBox Grid.Row="0" Margin="0 0 0 5" IsEnabled="False"></TextBox>
+
+                <!-- Bottom Chat Input Box -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="0  0 5 0" VerticalAlignment="Center" Padding="5"></TextBox>
+                    <Button Grid.Column="1" Content="Send"></Button>
+                </Grid>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>
