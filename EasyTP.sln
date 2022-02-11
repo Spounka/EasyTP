@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLib", "SharedLib\SharedLib.csproj", "{D8815785-918A-4F58-9CFE-3455EFED9AEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teacher", "Teacher\Teacher.csproj", "{D0917B19-A1AF-497E-A561-3B8F783B3D47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Student", "Student\Student.csproj", "{20E1BDAB-B6CF-4358-AC91-9CBE7C6EFFC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Student.Tests", "Student.Tests\Student.Tests.csproj", "{C9AF5E03-D024-4F7B-8E34-4F81EE9D641C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,6 +18,18 @@ Global
 		{D8815785-918A-4F58-9CFE-3455EFED9AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8815785-918A-4F58-9CFE-3455EFED9AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8815785-918A-4F58-9CFE-3455EFED9AEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0917B19-A1AF-497E-A561-3B8F783B3D47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0917B19-A1AF-497E-A561-3B8F783B3D47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0917B19-A1AF-497E-A561-3B8F783B3D47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0917B19-A1AF-497E-A561-3B8F783B3D47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E1BDAB-B6CF-4358-AC91-9CBE7C6EFFC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E1BDAB-B6CF-4358-AC91-9CBE7C6EFFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E1BDAB-B6CF-4358-AC91-9CBE7C6EFFC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E1BDAB-B6CF-4358-AC91-9CBE7C6EFFC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9AF5E03-D024-4F7B-8E34-4F81EE9D641C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9AF5E03-D024-4F7B-8E34-4F81EE9D641C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9AF5E03-D024-4F7B-8E34-4F81EE9D641C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9AF5E03-D024-4F7B-8E34-4F81EE9D641C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
