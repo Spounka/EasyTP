@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using Teacher.ViewModel;
 
 namespace Teacher.View
@@ -13,17 +14,12 @@ namespace Teacher.View
         public MainWindow()
         {
             InitializeComponent();
-            this.SizeChanged += OnWindowResize;
             vm = new ChatServerVM();
             DataContext = vm;
+            ConnectedUsers.ItemsSource = vm.students;
         }
 
-        private void OnWindowResize(object sender, SizeChangedEventArgs e)
-        {
-            vm.OnWindowResize(e.NewSize.Height, e.NewSize.Width);
-        }
-
-        private void StartServer(object sender, RoutedEventArgs e)
+        private async void StartServer(object sender, RoutedEventArgs e)
         {
             var portNumberText = PortNumberTextBox.Text;
             if (string.IsNullOrEmpty(portNumberText) || string.IsNullOrWhiteSpace(portNumberText))
@@ -33,7 +29,7 @@ namespace Teacher.View
             if (!success)
                 MessageBox.Show("Error, Input a valid Port number!", "EasyTP - Teacher");
             else
-                vm.StartListening(portNumber);
+                await vm.StartListening(portNumber);
         }
 
         private void StopServer(object sender, RoutedEventArgs e)
