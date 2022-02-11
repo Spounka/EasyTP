@@ -1,44 +1,37 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text.RegularExpressions;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Student.Model;
 
 namespace Student.ViewModel
 {
     public class TcpConnectionVM
     {
-        TcpClient client;
+        private TcpClient client;
+        public StudentConnectionModel _connectionModel { get; set; }
 
-        public bool Connect(string ip, int port, out string errorMessage)
+        public async Task Connect()
         {
             client = new TcpClient();
-            errorMessage = string.Empty;
             try
             {
-                if (!IPAddress.TryParse(ip, out var address))
-                    return false;
-                client.Connect(address, port);
-                return true;
+                await client.ConnectAsync(_connectionModel.ServerIP, _connectionModel.Port);
+                await SendUsername();
             }
-            catch (Exception e)
+            catch (SocketException)
             {
-                errorMessage = e.ToString();
-                return false;
+                Console.WriteLine("Error, Socket unavailable");
             }
         }
 
-        public bool IsIPValid(string ip)
+        private Task SendUsername()
         {
-            if (string.IsNullOrEmpty(ip))
-                return false;
-
-            var reg = new Regex(@"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
-            var match = reg.Match(ip);
-            return match.Success;
-        }
-
-        public void SendUsername(string username)
-        {
+            var usernameBytes = Encoding.UTF8.GetBytes(_connectionModel.FullName);
+            var stream = client.GetStream();
+            return stream.WriteAsync(usernameBytes, 0, usernameBytes.Length);
         }
     }
 }
