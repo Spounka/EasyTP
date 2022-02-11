@@ -1,6 +1,9 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using Student.Model;
 using Student.ViewModel;
 
 namespace Student.View
@@ -18,33 +21,13 @@ namespace Student.View
             DataContext = _connectionVm = new TcpConnectionVM();
         }
 
-        private void OnConnectButtonClicked(object sender, RoutedEventArgs e)
+        private async void OnConnectButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (!_connectionVm.IsIPValid(IPField.Text))
-            {
-                MessageBox.Show("IP / Host invalid");
-                return;
-            }
+            var binding = BindingOperations.GetBinding(IPField, TextBox.TextProperty);
+            if (binding == null) return;
 
-            if (!int.TryParse(PortField.Text, out var port))
-            {
-                MessageBox.Show("IP / Host invalid");
-                return;
-            }
-
-            if (!_connectionVm.Connect(IPField.Text, port, out var errorMessage))
-            {
-                MessageBox.Show($"Error connecting to server: {errorMessage}");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(FullNameField.Text) || string.IsNullOrEmpty(FullNameField.Text))
-            {
-                MessageBox.Show("FullName cannot be empty");
-                return;
-            }
-
-            _connectionVm.SendUsername(FullNameField.Text);
+            _connectionVm._connectionModel = (StudentConnectionModel)binding.Source;
+            await _connectionVm.Connect();
         }
 
         private void OnDisconnectButtonClicked(object sender, RoutedEventArgs e)
