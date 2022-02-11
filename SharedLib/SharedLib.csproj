@@ -11,6 +11,7 @@
         <AssemblyName>SharedLib</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,6 +46,8 @@
         <Compile Include="Interfaces\IStudentTP.cs" />
         <Compile Include="Interfaces\ITeacherMessage.cs" />
         <Compile Include="Interfaces\ITeacherTP.cs" />
+        <Compile Include="Models\Message.cs" />
+        <Compile Include="Models\MessageType.cs" />
         <Compile Include="Models\UserModel.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
