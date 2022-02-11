@@ -3,10 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:v="clr-namespace:Student.ValidationRules"
+        xmlns:mdl="clr-namespace:Student.Model"
         mc:Ignorable="d"
         Title="EasyTP - Student" MinHeight="350" MinWidth="525">
 
-    <!-- Window Validation Controls -->
+    <Window.Resources>
+        <!-- Model Reference Key -->
+        <mdl:StudentConnectionModel x:Key="connectionModel"></mdl:StudentConnectionModel>
+
+        <!-- Window Validation Controls -->
+
+        <!-- Error Control template -->
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+                <AdornedElementPlaceholder x:Name="adornedError" />
+            </DockPanel>
+        </ControlTemplate>
+
+        <!-- Error Style -->
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)/ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <!-- Top Level Controls -->
     <Grid>
@@ -24,13 +50,46 @@
                 </Grid.RowDefinitions>
                 <StackPanel>
                     <TextBlock Text="Full Name" Margin="0 0 0 5"></TextBlock>
-                    <TextBox x:Name="FullNameField" Padding="3"></TextBox>
+                    <TextBox x:Name="FullNameField" Padding="3"
+                             Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                             Style="{StaticResource textBoxInError}">
+                        <TextBox.Text>
+                            <Binding Source="{StaticResource connectionModel}"
+                                     Path="FullName" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <v:FullNameRule></v:FullNameRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
 
                     <TextBlock Text="Server IP" Margin="0 5 0 5"></TextBlock>
-                    <TextBox x:Name="IPField" Padding="3"> </TextBox>
+                    <TextBox x:Name="IPField" Padding="3"
+                             Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                             Style="{StaticResource textBoxInError}">
+                        <TextBox.Text>
+                            <Binding Source="{StaticResource connectionModel}"
+                                     Path="ServerIP" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <v:IPRule></v:IPRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
 
                     <TextBlock Text="Port" Margin="0 5 0 5"></TextBlock>
-                    <TextBox x:Name="PortField" Padding="3"></TextBox>
+                    <TextBox x:Name="PortField" Padding="3"
+                             Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                             Style="{StaticResource textBoxInError}">
+                        <TextBox.Text>
+                            <Binding Source="{StaticResource connectionModel}"
+                                     Path="Port" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <v:PortRule></v:PortRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
 
                     <Button Click="OnConnectButtonClicked" x:Name="ConnectButton" Content="Connect" Margin="0 5 0 0"></Button>
                     <Button Click="OnDisconnectButtonClicked" x:Name="DisconnectButton" Content="Disconnect"
