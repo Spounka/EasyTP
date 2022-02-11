@@ -37,7 +37,7 @@
     <!-- Top Level Controls -->
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="60" Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto" MinWidth="120"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
@@ -91,9 +91,31 @@
                         </TextBox.Text>
                     </TextBox>
 
-                    <Button Click="OnConnectButtonClicked" x:Name="ConnectButton" Content="Connect" Margin="0 5 0 0"></Button>
+                    <Button Click="OnConnectButtonClicked" x:Name="ConnectButton" Content="Connect" Margin="0 5 0 0">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition
+                                                Binding="{Binding ElementName=IPField, Path=(Validation.HasError)}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding ElementName=FullNameField, Path=(Validation.HasError)}"
+                                                Value="False" />
+                                            <Condition
+                                                Binding="{Binding ElementName=PortField, Path=(Validation.HasError)}"
+                                                Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="IsEnabled" Value="True"></Setter>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                     <Button Click="OnDisconnectButtonClicked" x:Name="DisconnectButton" Content="Disconnect"
-                            Margin="0 2 0 5">
+                            Margin="0 2 0 5" IsEnabled="False">
                     </Button>
                 </StackPanel>
                 <TextBlock Grid.Row="1" x:Name="StatusText" Text="Status" Margin="0 5 0 5" VerticalAlignment="Bottom"></TextBlock>
