@@ -45,7 +45,7 @@
         <Compile Include="Interfaces\IStudentTP.cs" />
         <Compile Include="Interfaces\ITeacherMessage.cs" />
         <Compile Include="Interfaces\ITeacherTP.cs" />
-        <Compile Include="Models\StudentModel.cs" />
+        <Compile Include="Models\UserModel.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
