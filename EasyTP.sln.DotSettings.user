@@ -1,10 +1,12 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer /&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=259144ed_002D526e_002D4470_002Daef5_002Ddf34fc72e5aa/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PortRuleTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=95fcec74_002D1fef_002D4a94_002D83a6_002Df85304c8cf62/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="FullNameRuleTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::C9AF5E03-D024-4F7B-8E34-4F81EE9D641C::.NETFramework,Version=v4.8::Student.Tests.ValidationRules.PortRuleTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::C9AF5E03-D024-4F7B-8E34-4F81EE9D641C::.NETFramework,Version=v4.8::Student.Tests.ValidationRules.FullNameRuleTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
+	
 	
 	
 	
