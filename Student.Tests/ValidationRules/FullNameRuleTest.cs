@@ -106,7 +106,7 @@ namespace Student.Tests.ValidationRules
         }
 
         [Test]
-        public void FullName_FourNames_FalseTest()
+        public void FullName_FourNames_TrueTest()
         {
             // ARRANGE
             var fullNameTestRule = new FullNameRule();
@@ -116,7 +116,7 @@ namespace Student.Tests.ValidationRules
             var validationResult = fullNameTestRule.Validate("Nazih Spounka Von Schpeiner", culture);
 
             // ASSERT
-            Assert.IsFalse(validationResult.IsValid);
+            Assert.IsTrue(validationResult.IsValid);
         }
     }
 }

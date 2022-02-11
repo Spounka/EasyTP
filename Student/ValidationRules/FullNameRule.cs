@@ -13,7 +13,7 @@ namespace Student.ValidationRules
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrWhiteSpace(fullName))
                 return new ValidationResult(false, "Full Name cannot be empty!");
 
-            var regex = new Regex(@"^[A-z]+\s[A-z]+\s*[A-z]*$");
+            var regex = new Regex(@"^([A-z\-]+\s)+[A-z\-]+$");
 
             return regex.Match(fullName).Success
                 ? ValidationResult.ValidResult
