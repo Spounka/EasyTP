@@ -12,7 +12,7 @@ namespace Student.ValidationRules
             if (string.IsNullOrEmpty(ip) || string.IsNullOrWhiteSpace(ip))
                 return new ValidationResult(false, "IP cannot be empty");
 
-            var reg = new Regex(@"^([0-9]{1,3}\.){3}[0-9]{1,3}$");
+            var reg = new Regex(@"^(([0-9]{1,3}\.){3}[0-9]{1,3}|localhost)$");
             var match = reg.Match(ip);
             return match.Success
                 ? ValidationResult.ValidResult

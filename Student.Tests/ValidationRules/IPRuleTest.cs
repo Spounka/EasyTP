@@ -100,7 +100,7 @@ namespace Student.Tests.ValidationRules
 
         [Test]
         public void IPRule_FourBytesNoLetters_TrueTest(
-            [Values("0.0.0.0", "127.0.0.1", "192.168.1.1", "10.14.18.1")]
+            [Values("0.0.0.0", "127.0.0.1", "192.168.1.1", "10.14.18.1", "localhost")]
             string ip)
         {
             // Act
