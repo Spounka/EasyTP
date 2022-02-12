@@ -38,6 +38,11 @@
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Runtime.Remoting" />
+        <Reference Include="System.Runtime.Remoting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>..\..\..\.nuget\packages\microsoft.netframework.referenceassemblies.net48\1.0.2\build\.NETFramework\v4.8\System.Runtime.Remoting.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
         <Reference Include="System.Xml" />
         <Reference Include="System.Xaml">
             <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -49,6 +54,8 @@
     <ItemGroup>
         <Compile Include="Model\StateObject.cs" />
         <Compile Include="Properties\Annotations.cs" />
+        <Compile Include="Remoting\Implementations\ValidatePresenceImpl.cs" />
+        <Compile Include="Remoting\RemotingServer.cs" />
         <Compile Include="ViewModel\ChatServerVM.cs" />
         <Compile Include="View\App.xaml.cs">
           <DependentUpon>App.xaml</DependentUpon>
