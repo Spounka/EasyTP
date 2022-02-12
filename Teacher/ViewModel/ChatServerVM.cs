@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Soap;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using SharedLib.Models;
 using Teacher.Model;
+using System.Windows.Data;
+using Teacher.Remoting.Implementations;
 
 namespace Teacher.ViewModel
 {
     public class ChatServerVM : INotifyPropertyChanged
     {
         public BindingList<UserModel> Students { get; } = new BindingList<UserModel>();
+        private readonly object studentsLock = new object();
 
-        private ConcurrentDictionary<UserModel, ConcurrentBag<StateObject>> something =
-            new ConcurrentDictionary<UserModel, ConcurrentBag<StateObject>>();
 
         public string ServerStatus => $"Status:  {(IsServerActive ? "Connected" : "Offline")} ";
 
@@ -35,8 +39,11 @@ namespace Teacher.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+
         public void CreateServer(int port)
         {
+            ValidatePresenceImpl.UserValidated += AddUser;
+
             // Initialize the Cancellation Token
             _taskSource = new CancellationTokenSource();
             _ct = _taskSource.Token;
@@ -59,6 +66,8 @@ namespace Teacher.ViewModel
             Server.Start();
             IsServerActive = true;
 
+            BindingOperations.EnableCollectionSynchronization(Students, studentsLock);
+
             // Starts listening
             var task = new Task(ListeningTask);
             task.Start();
@@ -73,13 +82,8 @@ namespace Teacher.ViewModel
                     _ct.ThrowIfCancellationRequested();
 
                     var handler = Server.AcceptTcpClient();
-                    var userModel = new UserModel()
-                    {
-                        handler = handler
-                    };
 
-                    something[userModel] = new ConcurrentBag<StateObject>();
-                    var task = new Task(() => StartReadTask(userModel), TaskCreationOptions.AttachedToParent);
+                    var task = new Task(() => StartReadTask(handler), TaskCreationOptions.AttachedToParent);
                     task.Start();
                 }
             }
@@ -98,33 +102,59 @@ namespace Teacher.ViewModel
             }
         }
 
-        private void StartReadTask(UserModel userModel)
+        private void AddUser(UserModel userModel)
         {
-            var handler = userModel.handler;
+            Students.Add(userModel);
+        }
+
+
+        private void StartReadTask(TcpClient handler)
+        {
+            var stream = handler.GetStream();
+            var messageSizeBytes = new byte[4];
+
             while (handler.Connected && IsServerActive)
             {
-                var stream = handler.GetStream();
-                var state = new StateObject();
-
-                var messageSizeBytes = new byte[4];
-                var bytesRead = stream.Read(messageSizeBytes, 0, messageSizeBytes.Length);
-                if (bytesRead <= 0) continue;
-
-                if (!int.TryParse(Encoding.UTF8.GetString(messageSizeBytes), out var messageSize)) continue;
-
-                stream.Read(state.Buffer, 0, messageSize);
-                something[userModel].Add(state);
+                try
+                {
+                    var state = new StateObject()
+                    {
+                        handler = handler
+                    };
+                }
+                catch (ObjectDisposedException)
+                {
+                    break;
+                }
+                catch (IOException)
+                {
+                    break;
+                }
             }
+
+            Debug.WriteLine("Disconnected");
+        }
+
+        private object ReadObject(StateObject stateObject)
+        {
+            var handler = stateObject.handler;
+            var stream = handler.GetStream();
+            var formatter = new SoapFormatter();
+            return formatter.Deserialize(stream);
         }
 
         public async Task WriteAsync(UserModel model, StateObject state)
         {
-            var stream = model.handler.GetStream();
+            var stream = state.handler.GetStream();
             var messageLength = state.Buffer.Length;
             var messageLengthBytes = Encoding.UTF8.GetBytes(messageLength.ToString());
 
             stream.Write(messageLengthBytes, 0, messageLength);
             await stream.WriteAsync(state.Buffer, 0, StateObject.BufferSize, _ct);
+        }
+
+        public void BroadCast(string message)
+        {
         }
 
 

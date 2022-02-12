@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Teacher.ViewModel"
         mc:Ignorable="d"
+        Loaded="StartRemotingServer"
         Title="EasyTP - Teacher" MinHeight="450" MinWidth="525">
     <Window.DataContext>
         <vm:ChatServerVM></vm:ChatServerVM>

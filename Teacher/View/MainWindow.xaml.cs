@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
+using Teacher.Remoting;
 using Teacher.ViewModel;
 
 namespace Teacher.View
@@ -34,6 +35,11 @@ namespace Teacher.View
         private void StopServer(object sender, RoutedEventArgs e)
         {
             vm.StopServer();
+        }
+
+        private void StartRemotingServer(object sender, RoutedEventArgs e)
+        {
+            RemotingServer.StartRemotingServer(8888);
         }
     }
 }
