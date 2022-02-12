@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
@@ -7,115 +7,134 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using SharedLib.Models;
+using Teacher.Model;
 
 namespace Teacher.ViewModel
 {
     public class ChatServerVM : INotifyPropertyChanged
     {
-        public ObservableCollection<StudentModel> Students { get; } = new ObservableCollection<StudentModel>();
+        public BindingList<UserModel> Students { get; } = new BindingList<UserModel>();
 
-        public string ServerStatus => "Status: " + (IsServerActive ? "Connected" : "Offline");
+        private ConcurrentDictionary<UserModel, ConcurrentBag<StateObject>> something =
+            new ConcurrentDictionary<UserModel, ConcurrentBag<StateObject>>();
+
+        public string ServerStatus => $"Status:  {(IsServerActive ? "Connected" : "Offline")} ";
 
         public bool IsServerActive { get; private set; }
-        private string WindowWidth { get; set; }
-        private string WindowHeight { get; set; }
-
-
-        private Task listeningTask;
 
         private TcpListener Server;
         private CancellationTokenSource _taskSource;
         private CancellationToken _ct;
-
-        public async void StartListening(int port)
-        {
-            try
-            {
-                Server = new TcpListener(IPAddress.Any, port);
-                Server.Start();
-
-                IsServerActive = true;
-                OnPropertyChanged("ServerStatus");
-                OnPropertyChanged("IsServerActive");
-
-                Students.Add(new StudentModel()
-                {
-                    FullName = "Dummy Name",
-                    Group = "Dummy Group"
-                });
-
-                _taskSource = new CancellationTokenSource();
-                _ct = _taskSource.Token;
-                listeningTask = Task.Run(ListeningTaskAction, _taskSource.Token);
-                try
-                {
-                    await listeningTask;
-                }
-                catch (OperationCanceledException)
-                {
-                    //abort
-                }
-                finally
-                {
-                    _taskSource.Dispose();
-                    listeningTask.Dispose();
-                }
-            }
-            catch (SocketException)
-            {
-                //abort
-            }
-        }
-
-        private void ListeningTaskAction()
-        {
-            _ct.ThrowIfCancellationRequested();
-            try
-            {
-                while (true)
-                {
-                    var handler = Server.AcceptTcpClient();
-                    var stream = handler.GetStream();
-
-                    var bytes = new byte[30];
-                    var bytesRead = stream.Read(bytes, 0, bytes.Length);
-                    if (bytesRead < 1)
-                        break;
-                    else
-                        Students.Add(new StudentModel() { FullName = Encoding.UTF8.GetString(bytes), Group = "01" });
-                    if (_ct.IsCancellationRequested)
-                    {
-                        Server.Stop();
-                        _ct.ThrowIfCancellationRequested();
-                    }
-                }
-            }
-            catch (SocketException)
-            {
-            }
-        }
-
-        public void StopServer()
-        {
-            _taskSource.Cancel();
-            Server.Stop();
-            IsServerActive = false;
-            OnPropertyChanged("ServerStatus");
-            OnPropertyChanged("IsServerActive");
-        }
-
-        public void OnWindowResize(double newSizeHeight, double newSizeWidth)
-        {
-            WindowHeight = $"Height: {newSizeHeight}";
-            WindowWidth = $"Width: {newSizeWidth}";
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void CreateServer(int port)
+        {
+            // Initialize the Cancellation Token
+            _taskSource = new CancellationTokenSource();
+            _ct = _taskSource.Token;
+
+            // Initialize the Server
+            InitServer(port);
+            NotifyPropertyChanges();
+        }
+
+        private void NotifyPropertyChanges()
+        {
+            // Notifies the UI about the changes
+            OnPropertyChanged("ServerStatus");
+            OnPropertyChanged("IsServerActive");
+        }
+
+        private void InitServer(int port)
+        {
+            Server ??= new TcpListener(IPAddress.Any, port);
+            Server.Start();
+            IsServerActive = true;
+
+            // Starts listening
+            var task = new Task(ListeningTask);
+            task.Start();
+        }
+
+        private void ListeningTask()
+        {
+            try
+            {
+                while (!_ct.IsCancellationRequested && IsServerActive)
+                {
+                    _ct.ThrowIfCancellationRequested();
+
+                    var handler = Server.AcceptTcpClient();
+                    var userModel = new UserModel()
+                    {
+                        handler = handler
+                    };
+
+                    something[userModel] = new ConcurrentBag<StateObject>();
+                    var task = new Task(() => StartReadTask(userModel), TaskCreationOptions.AttachedToParent);
+                    task.Start();
+                }
+            }
+            catch (SocketException)
+            {
+            }
+            catch (ObjectDisposedException e)
+            {
+                MessageBox.Show("haha, Error still here" + e);
+            }
+            finally
+            {
+                Server.Stop();
+                _taskSource.Dispose();
+                Server = null;
+            }
+        }
+
+        private void StartReadTask(UserModel userModel)
+        {
+            var handler = userModel.handler;
+            while (handler.Connected && IsServerActive)
+            {
+                var stream = handler.GetStream();
+                var state = new StateObject();
+
+                var messageSizeBytes = new byte[4];
+                var bytesRead = stream.Read(messageSizeBytes, 0, messageSizeBytes.Length);
+                if (bytesRead <= 0) continue;
+
+                if (!int.TryParse(Encoding.UTF8.GetString(messageSizeBytes), out var messageSize)) continue;
+
+                stream.Read(state.Buffer, 0, messageSize);
+                something[userModel].Add(state);
+            }
+        }
+
+        public async Task WriteAsync(UserModel model, StateObject state)
+        {
+            var stream = model.handler.GetStream();
+            var messageLength = state.Buffer.Length;
+            var messageLengthBytes = Encoding.UTF8.GetBytes(messageLength.ToString());
+
+            stream.Write(messageLengthBytes, 0, messageLength);
+            await stream.WriteAsync(state.Buffer, 0, StateObject.BufferSize, _ct);
+        }
+
+
+        public void StopServer()
+        {
+            if (IsServerActive && _ct.CanBeCanceled)
+                _taskSource.Cancel();
+
+            IsServerActive = false;
+            NotifyPropertyChanges();
         }
     }
 }
