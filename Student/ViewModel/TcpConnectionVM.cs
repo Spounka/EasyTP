@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Student.Model;
@@ -27,11 +25,14 @@ namespace Student.ViewModel
             }
         }
 
-        private Task SendUsername()
+        private async Task SendUsername()
         {
             var usernameBytes = Encoding.UTF8.GetBytes(_connectionModel.FullName);
+            var messageLength = Encoding.UTF8.GetBytes(usernameBytes.Length.ToString());
             var stream = client.GetStream();
-            return stream.WriteAsync(usernameBytes, 0, usernameBytes.Length);
+
+            stream.Write(messageLength, 0, messageLength.Length);
+            await stream.WriteAsync(usernameBytes, 0, usernameBytes.Length);
         }
     }
 }
