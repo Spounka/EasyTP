@@ -26,7 +26,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Connected Users List -->
-                <ListBox Margin="2" x:Name="ConnectedUsers" ItemsSource="{Binding students}">
+                <ListBox Margin="2 0 2 2" x:Name="ConnectedUsers" ItemsSource="{Binding Students}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding FullName}"></TextBlock>
@@ -38,17 +38,50 @@
                 <StackPanel Grid.Row="1">
                     <TextBlock Margin="2">Port Number</TextBlock>
                     <TextBox x:Name="PortNumberTextBox" Margin="2" Padding="2"></TextBox>
-                    <Button Margin="2" Click="StartServer"
-                            IsEnabled="{Binding  ElementName=StopButton, Path=IsEnabled}">
-                        Start Server
+
+
+                    <Button Margin="2" Click="StartServer" Content="Start Server">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsServerActive}"
+                                                 Value="False">
+                                        <Setter Property="IsEnabled" Value="True"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsServerActive}"
+                                                 Value="True">
+                                        <Setter Property="IsEnabled" Value="False"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                     </Button>
-                    <Button Name="StopButton" Margin="2" Click="StopServer" IsEnabled="{Binding IsServerActive}">Stop Server</Button>
+
+                    <Button Name="StopButton" Margin="2" Click="StopServer" Content="Stop Server"
+                            IsEnabled="{Binding IsServerActive}">
+                    </Button>
                     <TextBlock Margin="2" Text="{Binding ServerStatus}"></TextBlock>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Chat Area -->
-        <Button Grid.Column="1" Margin="2">Hello</Button>
+        <Border Grid.Column="1" Padding="5 0 5 5" Margin="5" BorderBrush="LightGray">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox IsEnabled="False"></TextBox>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto" MinWidth="80" MaxWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="Text Box" Padding="3" Margin="0 5 3 0"></TextBox>
+                    <Button Grid.Column="1" Margin="0 5 0 0">Send</Button>
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
