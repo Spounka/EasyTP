@@ -16,10 +16,9 @@ namespace Teacher.View
             InitializeComponent();
             vm = new ChatServerVM();
             DataContext = vm;
-            ConnectedUsers.ItemsSource = vm.students;
         }
 
-        private async void StartServer(object sender, RoutedEventArgs e)
+        private void StartServer(object sender, RoutedEventArgs e)
         {
             var portNumberText = PortNumberTextBox.Text;
             if (string.IsNullOrEmpty(portNumberText) || string.IsNullOrWhiteSpace(portNumberText))
@@ -29,7 +28,7 @@ namespace Teacher.View
             if (!success)
                 MessageBox.Show("Error, Input a valid Port number!", "EasyTP - Teacher");
             else
-                await vm.StartListening(portNumber);
+                vm.CreateServer(portNumber);
         }
 
         private void StopServer(object sender, RoutedEventArgs e)
