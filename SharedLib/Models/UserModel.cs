@@ -4,6 +4,7 @@ using System.Net.Sockets;
 
 namespace SharedLib.Models
 {
+    [System.Serializable]
     public class UserModel
     {
         public string FullName { get; set; }
