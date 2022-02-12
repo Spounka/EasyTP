@@ -1,7 +1,9 @@
-﻿namespace SharedLib
+﻿using System.Net.Sockets;
+
+namespace SharedLib
 {
     public interface IPresence
     {
-        void ValidatePresence();
+        void ValidatePresence(object dataObject, TcpClient handle);
     }
 }
