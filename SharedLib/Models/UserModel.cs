@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace SharedLib.Models
 {
@@ -7,7 +8,7 @@ namespace SharedLib.Models
     {
         public string FullName { get; set; }
         public string Group { get; set; }
-
+        public TcpClient handler { get; set; }
         public readonly string MacAddress;
 
         public UserModel()
