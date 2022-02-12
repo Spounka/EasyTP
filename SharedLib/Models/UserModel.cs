@@ -9,14 +9,14 @@ namespace SharedLib.Models
     {
         public string FullName { get; set; }
         public string Group { get; set; }
-        public TcpClient handler { get; set; }
-        public readonly string MacAddress;
+
+        public string MacAddress { get; private set; }
 
         public UserModel()
         {
             MacAddress = NetworkInterface.GetAllNetworkInterfaces()
                 .Where(s => s.OperationalStatus == OperationalStatus.Up)
-                .Aggregate("", (s, e) => e.GetPhysicalAddress().ToString());
+                .Aggregate("", (s, e) => s += e.GetPhysicalAddress().ToString());
         }
     }
 }
